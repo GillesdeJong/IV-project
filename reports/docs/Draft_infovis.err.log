@@ -1,0 +1,74 @@
+Traceback (most recent call last):
+  File "/home/gilles/miniconda3/envs/jupyterbook/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/gilles/miniconda3/envs/jupyterbook/lib/python3.11/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/gilles/miniconda3/envs/jupyterbook/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 166, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/gilles/miniconda3/envs/jupyterbook/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/gilles/miniconda3/envs/jupyterbook/lib/python3.11/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/gilles/miniconda3/envs/jupyterbook/lib/python3.11/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/gilles/miniconda3/envs/jupyterbook/lib/python3.11/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# Con
+color_coal = '#003366'
+values_wind = df['generation wind onshore']
+total = df['total load actual']
+values_coal = df['generation fossil hard coal']
+values_nuclear = df['generation nuclear']
+
+wind_percentages = []
+coal_percentages = []
+nuclear_percentages = []
+for i in range(len(values_coal)):
+    if 0<values_wind[i]/total[i]<1:
+        wind_percentages.append(values_wind[i]/total[i])
+    else:
+        wind_percentages.append(0)
+    if 0<values_coal[i]/total[i]<1:
+        coal_percentages.append(values_coal[i]/total[i])
+    else:
+        coal_percentages.append(0)
+    if 0<values_nuclear[i]/total[i]<1:
+        nuclear_percentages.append(values_nuclear[i]/total[i])
+    else:
+        nuclear_percentages.append(0)
+df_2= pd.DataFrame(data =[wind_percentages, coal_percentages, nuclear_percentages]).T
+df_2.columns=['wind', 'coal', 'nuclear']
+
+smoothed_values_wind = df_2['wind'].rolling(365, min_periods=1, center=True).mean()
+smoothed_values_coal = df_2['coal'].rolling(365, min_periods=1, center=True).mean()
+smoothed_values_nuclear = df_2['nuclear'].rolling(365, min_periods=1, center=True).mean()
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=df['time'], y=smoothed_values_wind, name='Percentage wind energy', line=dict(color=color_wind)))
+fig.add_trace(go.Scatter(x=df['time'], y=smoothed_values_coal, name='Percentage coal energy', line=dict(color=color_coal)))
+
+fig.update_layout(title='Percentage contribution of total energy used', hovermode=False, xaxis=go.layout.XAxis(
+        title='Dates'
+    ),
+                  yaxis=go.layout.YAxis(
+        title='P
+import myst_nbercentage of total energy contribution',
+                      tickformat=',.0%'
+    ))
+fig.show()
+# fig = px.line(x=df['time'], y=smoothed_values, title='Life expectancy in Canada')
+# fig.show()
+------------------
+
+
+[0;36m  Cell [0;32mIn[8], line 39[0;36m[0m
+[0;31m    title='P[0m
+[0m          ^[0m
+[0;31mSyntaxError[0m[0;31m:[0m unterminated string literal (detected at line 39)
+
+
